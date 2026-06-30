@@ -29,3 +29,16 @@ export function getTodayInTimezone(timezone) {
     return getTodayString()
   }
 }
+
+// 日付文字列(YYYY-MM-DD)の年だけをずらす(昨年同期間の算出に使用)
+// 2/29のように移動先の年に存在しない日付になる場合は、その月の末日に丸める
+export function shiftYear(dateStr, yearsDelta) {
+  const [year, month, day] = dateStr.split('-').map(Number)
+  const shifted = new Date(Date.UTC(year + yearsDelta, month - 1, day))
+
+  if (shifted.getUTCMonth() !== month - 1) {
+    shifted.setUTCDate(0)
+  }
+
+  return shifted.toISOString().slice(0, 10)
+}

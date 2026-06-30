@@ -5,8 +5,16 @@
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
 }
 
+.city-detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
 .city-detail h2 {
-  margin-top: 0;
+  margin: 0;
   font-size: 1.2rem;
 }
 
@@ -16,13 +24,34 @@
   font-size: 0.9rem;
 }
 
+.temp-view-switch {
+  display: flex;
+  background: #f4f6f8;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.temp-view-button {
+  border: none;
+  background: transparent;
+  padding: 6px 12px;
+  font-size: 0.8rem;
+}
+
+.temp-view-button.active {
+  background: #2c7be5;
+  color: white;
+}
+
 .temperature-chart {
   max-width: 100%;
-  margin-bottom: 20px;
+  margin: 16px 0 20px;
 }
 
 .daily-table {
   font-size: 0.85rem;
+  display: block;
+  overflow-x: auto;
 }
 
 .daily-table th {
@@ -30,11 +59,13 @@
   padding: 8px;
   border-bottom: 2px solid #eee;
   color: #555;
+  white-space: nowrap;
 }
 
 .daily-table td {
   padding: 8px;
   border-bottom: 1px solid #f0f0f0;
+  white-space: nowrap;
 }
 
 .daily-table tr.past-row {

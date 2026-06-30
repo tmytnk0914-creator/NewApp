@@ -114,6 +114,42 @@
   color: #006699;
 }
 
+.alert-yoy-warmer {
+  background: #ffe0e0;
+  color: #cc0000;
+}
+
+.alert-yoy-cooler {
+  background: #e0eaff;
+  color: #1a4fcc;
+}
+
+/* ===== 前年差分(YoY) ===== */
+.yoy-warmer-text {
+  color: #cc0000;
+  font-weight: 600;
+}
+
+.yoy-cooler-text {
+  color: #1a4fcc;
+  font-weight: 600;
+}
+
+.yoy-badges {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.yoy-badge {
+  font-size: 0.72rem;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #f0f0f0;
+  color: #444;
+  white-space: nowrap;
+}
+
 /* ===== スマホカード ===== */
 .city-card-list {
   display: none;

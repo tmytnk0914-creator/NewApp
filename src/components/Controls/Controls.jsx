@@ -2,8 +2,8 @@ import { PERIOD_OPTIONS } from '../../constants/periods'
 import { MAX_CITIES } from '../../hooks/useCities'
 import './Controls.css'
 
-// 表示期間の切り替えと都市管理ボタンを配置するエリア
-function Controls({ period, onChangePeriod, onOpenManager, cityCount }) {
+// 表示期間の切り替え・昨年比較トグル・都市管理ボタンを配置するエリア
+function Controls({ period, onChangePeriod, onOpenManager, cityCount, compareLastYear, onToggleCompareLastYear }) {
   return (
     <div className="controls">
       <div className="period-switch">
@@ -17,6 +17,15 @@ function Controls({ period, onChangePeriod, onOpenManager, cityCount }) {
           </button>
         ))}
       </div>
+
+      <label className="compare-toggle">
+        <input
+          type="checkbox"
+          checked={compareLastYear}
+          onChange={(e) => onToggleCompareLastYear(e.target.checked)}
+        />
+        Compare with Last Year
+      </label>
 
       <div className="city-count">
         {cityCount} / {MAX_CITIES} cities

@@ -6,6 +6,7 @@ import CityDetail from './components/CityDetail/CityDetail'
 import CityManager from './components/CityManager/CityManager'
 import { useCities } from './hooks/useCities'
 import { useWeatherData } from './hooks/useWeatherData'
+import { useLastYearWeather } from './hooks/useLastYearWeather'
 import { filterByPeriod } from './utils/weatherUtils'
 import { PERIODS } from './constants/periods'
 import './App.css'
@@ -18,6 +19,13 @@ function App() {
   const [period, setPeriod] = useState(PERIODS.FORECAST)
   const [selectedCityId, setSelectedCityId] = useState(null)
   const [isManagerOpen, setIsManagerOpen] = useState(false)
+  // Phase 2: 昨年比較(初期値OFF。ONのときだけ昨年データを取得する)
+  const [compareLastYear, setCompareLastYear] = useState(false)
+
+  const {
+    lastYearByCity,
+    loading: lastYearLoading,
+  } = useLastYearWeather(cities, weatherByCity, compareLastYear)
 
   const selectedCity = cities.find((c) => c.id === selectedCityId) ?? null
   // 詳細エリアでは期間スイッチの選択にかかわらず全データ(過去+未来)を保持し、
@@ -25,6 +33,7 @@ function App() {
   const selectedCityWeather = selectedCityId
     ? filterByPeriod(weatherByCity[selectedCityId] ?? [], PERIODS.BOTH)
     : []
+  const selectedCityLastYearWeather = selectedCityId ? lastYearByCity[selectedCityId] ?? [] : []
 
   const handleSelectCity = (cityId) => {
     setSelectedCityId((prev) => (prev === cityId ? null : cityId))
@@ -44,6 +53,8 @@ function App() {
         onChangePeriod={setPeriod}
         onOpenManager={() => setIsManagerOpen(true)}
         cityCount={cities.length}
+        compareLastYear={compareLastYear}
+        onToggleCompareLastYear={setCompareLastYear}
       />
 
       <main className="app-main">
@@ -55,10 +66,19 @@ function App() {
           selectedCityId={selectedCityId}
           onSelectCity={handleSelectCity}
           loading={loading}
+          compareLastYear={compareLastYear}
+          lastYearByCity={lastYearByCity}
+          lastYearLoading={lastYearLoading}
         />
 
         {selectedCity && (
-          <CityDetail city={selectedCity} weatherData={selectedCityWeather} period={period} />
+          <CityDetail
+            city={selectedCity}
+            weatherData={selectedCityWeather}
+            lastYearData={selectedCityLastYearWeather}
+            period={period}
+            compareLastYear={compareLastYear}
+          />
         )}
       </main>
 

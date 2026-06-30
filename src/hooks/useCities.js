@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { INITIAL_CITIES } from '../constants/initialCities'
-import { loadCities, saveCities, removeWeatherCacheEntry } from '../utils/storage'
+import { loadCities, saveCities, removeWeatherCacheEntry, removeLastYearCacheEntry } from '../utils/storage'
 
 export const MAX_CITIES = 30
 
@@ -36,6 +36,7 @@ export function useCities() {
   const removeCity = useCallback((cityId) => {
     setCities((prev) => prev.filter((c) => c.id !== cityId))
     removeWeatherCacheEntry(cityId)
+    removeLastYearCacheEntry(cityId)
   }, [])
 
   return { cities, addCity, removeCity, isFull: cities.length >= MAX_CITIES }

@@ -3,9 +3,15 @@ function formatTemp(value) {
   return value === null || value === undefined ? '--' : `${value}°C`
 }
 
+// 前年差分を表示用にフォーマットする(プラスは+記号、マイナスは-記号を必ず表示)
+function formatDiff(value) {
+  if (value === null || value === undefined) return '--'
+  return `${value > 0 ? '+' : ''}${value}℃`
+}
+
 // スマホ向けの都市カード
-function CityCard({ row, isSelected, onSelect }) {
-  const { city, representativeDay, summary, alerts, error } = row
+function CityCard({ row, isSelected, onSelect, compareLastYear }) {
+  const { city, representativeDay, summary, yoy, alerts, error } = row
 
   return (
     <div className={`city-card ${isSelected ? 'selected' : ''}`} onClick={onSelect}>
@@ -31,6 +37,13 @@ function CityCard({ row, isSelected, onSelect }) {
           <div className="city-card-avg">
             7D Avg Max {formatTemp(summary.avgMaxTemp)} / Avg Min {formatTemp(summary.avgMinTemp)}
           </div>
+
+          {compareLastYear && (
+            <div className="yoy-badges">
+              <span className="yoy-badge">YoY Max {formatDiff(yoy?.maxDiff)}</span>
+              <span className="yoy-badge">YoY Min {formatDiff(yoy?.minDiff)}</span>
+            </div>
+          )}
 
           <div className="alert-badges">
             {alerts.map((alert) => (

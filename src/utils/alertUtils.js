@@ -4,10 +4,13 @@ const THRESHOLDS = {
   HOT: 30,
   COLD: 15,
   RAIN_RISK_MM: 5,
+  YOY_WARMER: 3,
+  YOY_COOLER: -3,
 }
 
-// 代表日の最高気温と期間内の降水量からアラートバッジを生成する
-export function getAlerts(representativeDay, periodData) {
+// 代表日の最高気温・期間内の降水量・前年差分からアラートバッジを生成する
+// yoySummaryは昨年比較ONのときのみ渡される({ maxDiff, minDiff })
+export function getAlerts(representativeDay, periodData, yoySummary = null) {
   const alerts = []
   if (!representativeDay) return alerts
 
@@ -24,6 +27,14 @@ export function getAlerts(representativeDay, periodData) {
   const hasRainRisk = periodData.some((d) => (d.precipitationSum ?? 0) >= THRESHOLDS.RAIN_RISK_MM)
   if (hasRainRisk) {
     alerts.push({ key: 'rain-risk', icon: '🌧️', label: 'Rain Risk' })
+  }
+
+  if (yoySummary && yoySummary.maxDiff !== null) {
+    if (yoySummary.maxDiff >= THRESHOLDS.YOY_WARMER) {
+      alerts.push({ key: 'yoy-warmer', icon: '📈', label: 'Warmer YoY' })
+    } else if (yoySummary.maxDiff <= THRESHOLDS.YOY_COOLER) {
+      alerts.push({ key: 'yoy-cooler', icon: '📉', label: 'Cooler YoY' })
+    }
   }
 
   return alerts
