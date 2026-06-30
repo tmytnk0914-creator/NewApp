@@ -1,0 +1,14 @@
+node_modules
+dist
+dist-ssr
+*.local
+
+# エディタ・OS関連
+.vscode/*
+!.vscode/extensions.json
+.DS_Store
+
+# 環境変数・秘密鍵
+.env
+.env.local
+*.pem

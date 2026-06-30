@@ -1,0 +1,99 @@
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  z-index: 100;
+}
+
+.modal-content {
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  max-width: 520px;
+  width: 100%;
+  max-height: 85vh;
+  overflow-y: auto;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.close-button {
+  background: none;
+  border: none;
+  font-size: 1.1rem;
+}
+
+.city-search-form {
+  display: flex;
+  gap: 8px;
+  margin: 12px 0;
+}
+
+.city-search-form input {
+  flex: 1;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+}
+
+.city-search-form button {
+  padding: 8px 16px;
+  background: #2c7be5;
+  color: white;
+  border: none;
+  border-radius: 6px;
+}
+
+.city-search-form button:disabled {
+  background: #a9c5ea;
+  cursor: not-allowed;
+}
+
+.warning-text {
+  color: #cc3300;
+  font-size: 0.85rem;
+}
+
+.info-text {
+  color: #555;
+  font-size: 0.85rem;
+}
+
+.search-results,
+.registered-cities {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0;
+}
+
+.search-results li,
+.registered-cities li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 0.9rem;
+}
+
+.region-label {
+  color: #888;
+  font-size: 0.82rem;
+}
+
+.remove-button {
+  background: #fff;
+  border: 1px solid #e74c3c;
+  color: #e74c3c;
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 0.8rem;
+}
