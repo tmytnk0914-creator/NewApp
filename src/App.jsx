@@ -1,18 +1,24 @@
 import { useState } from 'react'
 import Header from './components/Header/Header'
+import Navigation from './components/Navigation/Navigation'
 import Controls from './components/Controls/Controls'
 import CityOverview from './components/CityOverview/CityOverview'
 import CityDetail from './components/CityDetail/CityDetail'
 import CityManager from './components/CityManager/CityManager'
+import MonthlyCompare from './components/MonthlyCompare/MonthlyCompare'
 import { useCities } from './hooks/useCities'
 import { useWeatherData } from './hooks/useWeatherData'
 import { useLastYearWeather } from './hooks/useLastYearWeather'
 import { filterByPeriod } from './utils/weatherUtils'
 import { PERIODS } from './constants/periods'
+import { SCREENS } from './constants/screens'
 import './App.css'
 
 // アプリ全体のレイアウトと状態管理を行うルートコンポーネント
+// Phase 3: 日次ダッシュボード(Overview)と月次比較(Monthly Compare)を別画面として切り替える
 function App() {
+  const [screen, setScreen] = useState(SCREENS.OVERVIEW)
+
   const { cities, addCity, removeCity, isFull } = useCities()
   const { weatherByCity, loading, lastUpdated, errors, refresh } = useWeatherData(cities)
 
@@ -47,49 +53,60 @@ function App() {
   return (
     <div className="app">
       <Header lastUpdated={lastUpdated} loading={loading} onRefresh={refresh} />
+      <Navigation screen={screen} onChangeScreen={setScreen} />
 
-      <Controls
-        period={period}
-        onChangePeriod={setPeriod}
-        onOpenManager={() => setIsManagerOpen(true)}
-        cityCount={cities.length}
-        compareLastYear={compareLastYear}
-        onToggleCompareLastYear={setCompareLastYear}
-      />
-
-      <main className="app-main">
-        <CityOverview
-          cities={cities}
-          weatherByCity={weatherByCity}
-          errors={errors}
-          period={period}
-          selectedCityId={selectedCityId}
-          onSelectCity={handleSelectCity}
-          loading={loading}
-          compareLastYear={compareLastYear}
-          lastYearByCity={lastYearByCity}
-          lastYearLoading={lastYearLoading}
-        />
-
-        {selectedCity && (
-          <CityDetail
-            city={selectedCity}
-            weatherData={selectedCityWeather}
-            lastYearData={selectedCityLastYearWeather}
+      {screen === SCREENS.OVERVIEW && (
+        <>
+          <Controls
             period={period}
+            onChangePeriod={setPeriod}
+            onOpenManager={() => setIsManagerOpen(true)}
+            cityCount={cities.length}
             compareLastYear={compareLastYear}
+            onToggleCompareLastYear={setCompareLastYear}
           />
-        )}
-      </main>
 
-      {isManagerOpen && (
-        <CityManager
-          cities={cities}
-          isFull={isFull}
-          onAddCity={addCity}
-          onRemoveCity={handleRemoveCity}
-          onClose={() => setIsManagerOpen(false)}
-        />
+          <main className="app-main">
+            <CityOverview
+              cities={cities}
+              weatherByCity={weatherByCity}
+              errors={errors}
+              period={period}
+              selectedCityId={selectedCityId}
+              onSelectCity={handleSelectCity}
+              loading={loading}
+              compareLastYear={compareLastYear}
+              lastYearByCity={lastYearByCity}
+              lastYearLoading={lastYearLoading}
+            />
+
+            {selectedCity && (
+              <CityDetail
+                city={selectedCity}
+                weatherData={selectedCityWeather}
+                lastYearData={selectedCityLastYearWeather}
+                period={period}
+                compareLastYear={compareLastYear}
+              />
+            )}
+          </main>
+
+          {isManagerOpen && (
+            <CityManager
+              cities={cities}
+              isFull={isFull}
+              onAddCity={addCity}
+              onRemoveCity={handleRemoveCity}
+              onClose={() => setIsManagerOpen(false)}
+            />
+          )}
+        </>
+      )}
+
+      {screen === SCREENS.MONTHLY && (
+        <main className="app-main">
+          <MonthlyCompare cities={cities} />
+        </main>
       )}
     </div>
   )

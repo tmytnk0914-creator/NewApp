@@ -42,3 +42,15 @@ export function shiftYear(dateStr, yearsDelta) {
 
   return shifted.toISOString().slice(0, 10)
 }
+
+// 今日からN日前の日付(YYYY-MM-DD)を返す
+// Historical Weather APIは直近数日分のデータがまだ確定していないため、
+// 今年分の終了日を算出する際に安全マージンとして使用する
+export function getDaysAgoString(daysAgo) {
+  const date = new Date()
+  date.setDate(date.getDate() - daysAgo)
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
+}

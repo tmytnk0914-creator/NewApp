@@ -1,0 +1,20 @@
+.navigation {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.nav-button {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 8px 18px;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.nav-button.active {
+  background: #2c7be5;
+  border-color: #2c7be5;
+  color: white;
+}

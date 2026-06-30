@@ -3,6 +3,7 @@ const CITIES_KEY = 'weatherDashboard_cities_v1'
 const CACHE_KEY = 'weatherDashboard_weatherCache_v1'
 const LAST_UPDATED_KEY = 'weatherDashboard_lastUpdated_v1'
 const LAST_YEAR_CACHE_KEY = 'weatherDashboard_lastYearCache_v1'
+const MONTHLY_CACHE_KEY = 'weatherDashboard_monthlyCache_v1'
 
 // ===== 都市一覧の保存・読み込み =====
 export function loadCities() {
@@ -85,4 +86,39 @@ export function removeLastYearCacheEntry(cityId) {
   const cache = loadLastYearCache()
   delete cache[cityId]
   localStorage.setItem(LAST_YEAR_CACHE_KEY, JSON.stringify(cache))
+}
+
+// ===== 月次データキャッシュ(Phase 3: 月次比較機能) =====
+// キー: `${cityId}_${year}`。選択した都市・年のデータのみ保存し、全都市一括取得は行わない
+export function loadMonthlyCache() {
+  try {
+    const raw = localStorage.getItem(MONTHLY_CACHE_KEY)
+    return raw ? JSON.parse(raw) : {}
+  } catch {
+    return {}
+  }
+}
+
+function monthlyCacheKey(cityId, year) {
+  return `${cityId}_${year}`
+}
+
+export function getMonthlyCacheEntry(cityId, year) {
+  const cache = loadMonthlyCache()
+  return cache[monthlyCacheKey(cityId, year)] ?? null
+}
+
+export function saveMonthlyCacheEntry(cityId, year, entry) {
+  const cache = loadMonthlyCache()
+  cache[monthlyCacheKey(cityId, year)] = entry
+  localStorage.setItem(MONTHLY_CACHE_KEY, JSON.stringify(cache))
+}
+
+// 都市削除時に、その都市に紐づく年次キャッシュをすべて削除する
+export function removeMonthlyCacheEntriesForCity(cityId) {
+  const cache = loadMonthlyCache()
+  Object.keys(cache).forEach((key) => {
+    if (key.startsWith(`${cityId}_`)) delete cache[key]
+  })
+  localStorage.setItem(MONTHLY_CACHE_KEY, JSON.stringify(cache))
 }
