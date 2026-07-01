@@ -1,58 +1,20 @@
 .controls {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
+  justify-content: flex-end;
   gap: 12px;
-  margin-top: 16px;
-}
-
-.period-switch {
-  display: flex;
-  background: #fff;
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
-}
-
-.period-button {
-  border: none;
-  background: transparent;
-  padding: 8px 16px;
-  font-size: 0.85rem;
-}
-
-.period-button.active {
-  background: #2c7be5;
-  color: white;
-}
-
-.compare-toggle {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 0.85rem;
-  color: #333;
-  background: #fff;
-  border-radius: 8px;
-  padding: 8px 12px;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
-}
-
-.compare-toggle input {
-  width: 16px;
-  height: 16px;
+  margin-top: 12px;
 }
 
 .city-count {
   font-size: 0.85rem;
-  color: #555;
+  color: #666;
 }
 
 .manage-button {
-  background: #ffffff;
+  background: #fff;
   border: 1px solid #ddd;
   border-radius: 8px;
-  padding: 8px 16px;
+  padding: 7px 14px;
   font-size: 0.85rem;
 }

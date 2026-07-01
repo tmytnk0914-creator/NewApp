@@ -1,11 +1,12 @@
 import { getTodayInTimezone } from '../utils/dateUtils'
 
 const FORECAST_BASE_URL = 'https://api.open-meteo.com/v1/forecast'
-const PAST_DAYS = 7
+// カレンダーで最大2ヶ月前までの日付を選択できるよう、過去60日分を取得する
+const PAST_DAYS = 60
 const FORECAST_DAYS = 7
 
-// 都市の過去7日+未来7日分の天気データを取得する(Open-Meteo Forecast API)
-// past_daysパラメータを使うことで、別途Historical APIを呼ばずに直近実績も取得できる
+// 都市の過去60日+未来7日分の天気データを取得する(Open-Meteo Forecast API)
+// past_days=60でカレンダー2ヶ月分をカバーし、アプリ側で選択した7日間を切り出す
 export async function fetchCityWeather(city) {
   const params = new URLSearchParams({
     latitude: city.latitude,

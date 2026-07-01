@@ -2,12 +2,12 @@
   margin-top: 16px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 24px;
 }
 
-.monthly-controls {
+.monthly-top-controls {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 12px;
@@ -15,6 +15,49 @@
   border-radius: 12px;
   padding: 12px 16px;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+.monthly-region-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.monthly-region-label {
+  margin: 0;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #2c7be5;
+  padding: 3px 12px;
+  background: #eaf2fd;
+  border-radius: 999px;
+  display: inline-block;
+}
+
+.monthly-city-block {
+  background: #fafbfc;
+  border: 1px solid #e8ecf0;
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.monthly-city-header {
+  border-bottom: 1px solid #e8ecf0;
+  padding-bottom: 8px;
+}
+
+.monthly-city-name {
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.monthly-city-region {
+  font-size: 0.82rem;
+  color: #888;
+  font-weight: 400;
 }
 
 .city-select {

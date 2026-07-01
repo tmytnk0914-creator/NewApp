@@ -1,0 +1,93 @@
+.calendar {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.cal-month {
+  flex: 1;
+  min-width: 220px;
+}
+
+.cal-month-label {
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-bottom: 6px;
+  color: #333;
+}
+
+.cal-dow-row {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  margin-bottom: 2px;
+}
+
+.cal-dow {
+  text-align: center;
+  font-size: 0.7rem;
+  color: #888;
+  padding: 2px 0;
+}
+
+.cal-dow.dow-sun {
+  color: #e74c3c;
+}
+
+.cal-dow.dow-sat {
+  color: #3498db;
+}
+
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 1px;
+}
+
+.cal-cell {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  border: none;
+  background: transparent;
+  border-radius: 4px;
+  cursor: pointer;
+  color: #333;
+}
+
+.cal-cell:hover {
+  background: #e8f0fc;
+}
+
+.cal-cell.empty {
+  cursor: default;
+  background: transparent;
+}
+
+.cal-cell.in-range {
+  background: #cce0ff;
+  color: #1a4fcc;
+  border-radius: 0;
+}
+
+.cal-cell.range-start {
+  background: #2c7be5;
+  color: white;
+  border-radius: 4px 0 0 4px;
+  font-weight: 600;
+}
+
+.cal-cell.today:not(.in-range) {
+  font-weight: 700;
+  color: #2c7be5;
+}
+
+.cal-cell.future-dim {
+  color: #bbb;
+}
+
+.cal-cell.future-dim.in-range {
+  background: #dce8f8;
+  color: #7aa8d8;
+}

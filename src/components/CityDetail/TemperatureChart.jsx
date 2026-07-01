@@ -9,86 +9,63 @@ import {
   Tooltip,
   Legend,
 } from 'chart.js'
-import { filterByPeriod, pairWithLastYear } from '../../utils/weatherUtils'
-import { formatDateLabel } from '../../utils/dateUtils'
-import { TEMP_VIEWS } from '../../constants/tempView'
+import { formatGridDate } from '../../utils/dateUtils'
 
-// Chart.jsに必要な構成要素を登録する
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend)
 
-// 都市の気温推移(最高/最低気温)を折れ線グラフで表示する
-// 昨年比較ONのときは、tempViewに応じて表示する線を絞り込みグラフが煩雑になるのを防ぐ
-function TemperatureChart({ weatherData, lastYearData, period, compareLastYear, tempView }) {
-  const filtered = filterByPeriod(weatherData, period)
-
-  if (filtered.length === 0) {
-    return <p className="no-data">No data available for this period.</p>
+// 選択都市の7日間気温推移グラフ(今年・昨年を絶対値で表示)
+function TemperatureChart({ currentDays, lastYearDays }) {
+  if (!currentDays || currentDays.length === 0) {
+    return <p className="no-data">この期間のデータがありません。</p>
   }
 
-  const showMax = !compareLastYear || tempView === TEMP_VIEWS.BOTH || tempView === TEMP_VIEWS.MAX
-  const showMin = !compareLastYear || tempView === TEMP_VIEWS.BOTH || tempView === TEMP_VIEWS.MIN
+  const hasLy = lastYearDays && lastYearDays.length > 0
 
-  const datasets = []
-
-  if (showMax) {
-    datasets.push({
-      label: 'Max Temp (°C)',
-      data: filtered.map((d) => d.maxTemp),
+  const datasets = [
+    {
+      label: '今年 最高℃',
+      data: currentDays.map((d) => d.maxTemp),
       borderColor: '#e74c3c',
       backgroundColor: '#e74c3c',
       tension: 0.3,
-    })
-  }
-  if (showMin) {
-    datasets.push({
-      label: 'Min Temp (°C)',
-      data: filtered.map((d) => d.minTemp),
+    },
+    {
+      label: '今年 最低℃',
+      data: currentDays.map((d) => d.minTemp),
       borderColor: '#3498db',
       backgroundColor: '#3498db',
+      tension: 0.3,
+    },
+  ]
+
+  if (hasLy) {
+    datasets.push({
+      label: '昨年 最高℃',
+      data: lastYearDays.map((d) => d.maxTemp),
+      borderColor: '#e74c3c',
+      backgroundColor: '#e74c3c',
+      borderDash: [6, 4],
+      tension: 0.3,
+    })
+    datasets.push({
+      label: '昨年 最低℃',
+      data: lastYearDays.map((d) => d.minTemp),
+      borderColor: '#3498db',
+      backgroundColor: '#3498db',
+      borderDash: [6, 4],
       tension: 0.3,
     })
   }
 
-  if (compareLastYear) {
-    const paired = pairWithLastYear(filtered, lastYearData)
-
-    if (showMax) {
-      datasets.push({
-        label: 'Last Year Max (°C)',
-        data: paired.map((d) => d.lastYear?.maxTemp ?? null),
-        borderColor: '#e74c3c',
-        backgroundColor: '#e74c3c',
-        borderDash: [6, 4],
-        tension: 0.3,
-      })
-    }
-    if (showMin) {
-      datasets.push({
-        label: 'Last Year Min (°C)',
-        data: paired.map((d) => d.lastYear?.minTemp ?? null),
-        borderColor: '#3498db',
-        backgroundColor: '#3498db',
-        borderDash: [6, 4],
-        tension: 0.3,
-      })
-    }
-  }
-
   const data = {
-    labels: filtered.map((d) => formatDateLabel(d.date)),
+    labels: currentDays.map((d) => formatGridDate(d.date)),
     datasets,
   }
 
   const options = {
     responsive: true,
-    plugins: {
-      legend: { position: 'top' },
-    },
-    scales: {
-      y: {
-        title: { display: true, text: '°C' },
-      },
-    },
+    plugins: { legend: { position: 'top' } },
+    scales: { y: { title: { display: true, text: '℃' } } },
   }
 
   return (

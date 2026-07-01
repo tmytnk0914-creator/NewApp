@@ -9,37 +9,50 @@ import MonthlyCompare from './components/MonthlyCompare/MonthlyCompare'
 import { useCities } from './hooks/useCities'
 import { useWeatherData } from './hooks/useWeatherData'
 import { useLastYearWeather } from './hooks/useLastYearWeather'
-import { filterByPeriod } from './utils/weatherUtils'
-import { PERIODS } from './constants/periods'
+import { addDays, getWeekDates, getTodayString, shiftYear } from './utils/dateUtils'
 import { SCREENS } from './constants/screens'
 import './App.css'
 
-// アプリ全体のレイアウトと状態管理を行うルートコンポーネント
-// Phase 3: 日次ダッシュボード(Overview)と月次比較(Monthly Compare)を別画面として切り替える
+// デフォルト: 今日を7日間ウィンドウの最後の日として表示期間の開始日を設定する
+function getDefaultWindowStart() {
+  return addDays(getTodayString(), -6)
+}
+
 function App() {
   const [screen, setScreen] = useState(SCREENS.OVERVIEW)
 
   const { cities, addCity, removeCity, isFull } = useCities()
   const { weatherByCity, loading, lastUpdated, errors, refresh } = useWeatherData(cities)
 
-  const [period, setPeriod] = useState(PERIODS.FORECAST)
+  // 表示期間の開始日(カレンダーでクリック選択)
+  const [windowStartDate, setWindowStartDate] = useState(getDefaultWindowStart)
+  // 昨年比較の日付オフセット(0=デフォルト, ±N=曜日調整)
+  const [lyOffset, setLyOffset] = useState(0)
+
+  const windowDates = getWeekDates(windowStartDate)
+  const windowEndDate = windowDates[6]
+
+  // 昨年比較期間: windowStartDateの1年前 + オフセット調整
+  const lyWindowStartDate = addDays(shiftYear(windowStartDate, -1), lyOffset)
+  const lyWindowEndDate = addDays(lyWindowStartDate, 6)
+  const lyWindowDates = getWeekDates(lyWindowStartDate)
+
+  const { lastYearByCity, loading: lastYearLoading } = useLastYearWeather(
+    cities,
+    lyWindowStartDate,
+    lyWindowEndDate,
+  )
+
   const [selectedCityId, setSelectedCityId] = useState(null)
   const [isManagerOpen, setIsManagerOpen] = useState(false)
-  // Phase 2: 昨年比較(初期値OFF。ONのときだけ昨年データを取得する)
-  const [compareLastYear, setCompareLastYear] = useState(false)
-
-  const {
-    lastYearByCity,
-    loading: lastYearLoading,
-  } = useLastYearWeather(cities, weatherByCity, compareLastYear)
 
   const selectedCity = cities.find((c) => c.id === selectedCityId) ?? null
-  // 詳細エリアでは期間スイッチの選択にかかわらず全データ(過去+未来)を保持し、
-  // グラフ/テーブル側で表示期間に応じたフィルタリングを行う
-  const selectedCityWeather = selectedCityId
-    ? filterByPeriod(weatherByCity[selectedCityId] ?? [], PERIODS.BOTH)
+  const selectedCurrentDays = selectedCityId
+    ? (weatherByCity[selectedCityId] ?? []).filter((d) => windowDates.includes(d.date))
     : []
-  const selectedCityLastYearWeather = selectedCityId ? lastYearByCity[selectedCityId] ?? [] : []
+  const selectedLyDays = selectedCityId
+    ? (lastYearByCity[selectedCityId] ?? []).filter((d) => lyWindowDates.includes(d.date))
+    : []
 
   const handleSelectCity = (cityId) => {
     setSelectedCityId((prev) => (prev === cityId ? null : cityId))
@@ -50,6 +63,16 @@ function App() {
     if (selectedCityId === cityId) setSelectedCityId(null)
   }
 
+  const handleSelectDate = (date) => {
+    setWindowStartDate(date)
+    setSelectedCityId(null)
+  }
+
+  const handleChangeLyOffset = (newOffset) => {
+    const clamped = Math.max(-14, Math.min(14, newOffset))
+    setLyOffset(clamped)
+  }
+
   return (
     <div className="app">
       <Header lastUpdated={lastUpdated} loading={loading} onRefresh={refresh} />
@@ -57,36 +80,30 @@ function App() {
 
       {screen === SCREENS.OVERVIEW && (
         <>
-          <Controls
-            period={period}
-            onChangePeriod={setPeriod}
-            onOpenManager={() => setIsManagerOpen(true)}
-            cityCount={cities.length}
-            compareLastYear={compareLastYear}
-            onToggleCompareLastYear={setCompareLastYear}
-          />
+          <Controls cityCount={cities.length} onOpenManager={() => setIsManagerOpen(true)} />
 
           <main className="app-main">
             <CityOverview
               cities={cities}
               weatherByCity={weatherByCity}
+              lastYearByCity={lastYearByCity}
               errors={errors}
-              period={period}
+              windowStartDate={windowStartDate}
+              lyWindowStartDate={lyWindowStartDate}
+              lyOffset={lyOffset}
+              onSelectDate={handleSelectDate}
+              onChangeLyOffset={handleChangeLyOffset}
               selectedCityId={selectedCityId}
               onSelectCity={handleSelectCity}
               loading={loading}
-              compareLastYear={compareLastYear}
-              lastYearByCity={lastYearByCity}
               lastYearLoading={lastYearLoading}
             />
 
             {selectedCity && (
               <CityDetail
                 city={selectedCity}
-                weatherData={selectedCityWeather}
-                lastYearData={selectedCityLastYearWeather}
-                period={period}
-                compareLastYear={compareLastYear}
+                currentDays={selectedCurrentDays}
+                lastYearDays={selectedLyDays}
               />
             )}
           </main>
